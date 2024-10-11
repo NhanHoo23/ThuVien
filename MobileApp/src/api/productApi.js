@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://192.168.0.4:3000/api";
 
+/*------------------CATEGORY API-------------------*/
 export const fetchCategories = async () => {
     try {
         const response = await axios.get(`${API_URL}/get-categories`);
@@ -20,7 +21,27 @@ export const addCategory = async (categoryData) => {
     }
 };
 
+export const updateCategory = async (categoryId, categoryData) => {
+    try {
+        const response = await axios.put(`${API_URL}/update-category/${categoryId}`, categoryData);
+        return response.data;
+    }
+    catch (error) {
+        throw error;
+    }
+}
 
+export const deleteCategory = async (categoryId) => {
+    try {
+        const response = await axios.delete(`${API_URL}/delete-category/${categoryId}`);
+        return response.data;
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
+/*------------------BOOK API-------------------*/
 export const fetchBooks = async () => {
     try {
         const response = await axios.get(`${API_URL}/get-books`);
@@ -38,6 +59,24 @@ export const addBook = async (bookData) => {
         throw error;
     }
 };
+
+export const updateBook = async (bookId, bookData) => {
+    try {
+        const response = await axios.put(`${API_URL}/update-book/${bookId}`, bookData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteBook = async (bookId) => {
+    try {
+        const response = await axios.delete(`${API_URL}/delete-book/${bookId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const fetchLoans = async () => {
     try {

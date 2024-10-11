@@ -12,20 +12,50 @@ export const ScreenType = {
     User: 'User',
 };
 
-const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenType, categories, roles, dateString, dateOutput }) => {
+export const DialogType = {
+    Add: 'Add',
+    Edit: 'Edit',
+};
+
+const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenType, categories, roles, dateString, dateOutput, book, category, user }) => {
     const [formData, setFormData] = useState({});
+    const [titleString, setTitleString] = useState('Add');
+    const [type, setType] = useState(DialogType.Add);
 
     useEffect(() => {
-        if (screenType === ScreenType.Home && categories.length > 0) {
-            setFormData(prevState => ({
-                ...prevState,
-                idCategory: categories[0]._id, 
-            }));
-        }        
+        if (book || category || user) {
+            console.log('Edit');
+            
+            setTitleString('Edit')
+            setType(DialogType.Edit);
+
+            if (book) {                
+                setFormData({
+                    bookName: book.bookName || '',
+                    author: book.author || '',
+                    price: book.price || '',
+                    idCategory: book.idCategory || '',
+                    quantity: book.quantity || '',
+                });                                
+            } 
+            if (category) {
+                setFormData({
+                    name: category.name || '',
+                });
+            }
+        } else {
+            console.log('Add');
+            setTitleString('Add')
+            setType(DialogType.Add);
+
+            if (screenType === ScreenType.Home && categories.length > 0) {            
+                handleInputChange('idCategory', categories[0]._id);
+            }
+        }
     }, [visible]);
 
     const handleInputChange = (field, value) => {
-        setFormData({ ...formData, [field]: value });
+        setFormData({ ...formData, [field]: value });        
     }
 
     const dismiss = () => {
@@ -36,7 +66,7 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
     const handleSubmit = () => {
         var err = "";
         switch (screenType) {
-            case ScreenType.Home:
+            case ScreenType.Home:                
                 err = validateBook(formData);
                 break;
             case ScreenType.Categotry:
@@ -58,10 +88,16 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
             return;
         }
 
-        if (screenType === ScreenType.User) {
+        if (screenType === ScreenType.Home) {
+            onSubmit(formData, type, book);
+        } else if (screenType === ScreenType.Categotry) {
+            onSubmit(formData, type, category);
+        } else if (screenType === ScreenType.User) {
             formData.dateOfBirth = dateOutput;
+
+            //onSubmit(formData, type, user);
         }
-        onSubmit(formData);
+        
     };
 
     const renderFields = () => {
@@ -69,16 +105,24 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
             case ScreenType.Home:
                 return (
                     <>
-                        <Text style={styles.modalTitle}>Add Book</Text>
+                        <Text style={styles.modalTitle}>{titleString} Book</Text>
 
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Book Name' onChangeText={(text) => handleInputChange('bookName', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Author' onChangeText={(text) => handleInputChange('author', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Price' keyboardType='number-pad' onChangeText={(text) => handleInputChange('price', Number(text))}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Quantity' keyboardType='number-pad' onChangeText={(text) => handleInputChange('quantity', Number(text))}/>
-                        
+                        <CustomEditText value={book ? book.bookName : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Book Name' onChangeText={(text) => handleInputChange('bookName', text)} />
+                        <CustomEditText value={book ? book.author : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Author' onChangeText={(text) => handleInputChange('author', text)} />
+                        <CustomEditText value={book ? String(book.price) : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Price' keyboardType='number-pad' onChangeText={(text) => handleInputChange('price', Number(text))} />
+                        <CustomEditText
+                            value={book ? String(book.quantity) : ""}
+                            textColor={styles.modalInputText}
+                            customStyle={styles.modalInput}
+                            placeholder='Quantity'
+                            keyboardType='number-pad'
+                            onChangeText={(text) => handleInputChange('quantity', Number(text))} />
+
                         <Picker
                             selectedValue={formData.idCategory}
-                            onValueChange={(value) => handleInputChange('idCategory', value)}>
+                            onValueChange={(value) => {handleInputChange('idCategory', value)
+                                console.log(formData.idCategory);
+                            }}>
                             {categories.map((category) => (
                                 <Picker.Item label={category.name} value={category._id} key={category._id} />
                             ))}
@@ -87,21 +131,21 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
                 );
             case ScreenType.Categotry:
                 return (
-                <>
-                    <Text style={styles.modalTitle}>Add Categotry</Text>
-                    <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Category Name' onChangeText={(text) => handleInputChange('name', text)}/>
-                </>)
+                    <>
+                        <Text style={styles.modalTitle}>{titleString} Categotry</Text>
+                        <CustomEditText value={category ? category.name : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Category Name' onChangeText={(text) => handleInputChange('name', text)} />
+                    </>)
             case ScreenType.User:
                 return (
                     <>
-                        <Text style={styles.modalTitle}>Add User</Text>
+                        <Text style={styles.modalTitle}>{titleString} User</Text>
 
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Name' onChangeText={(text) => handleInputChange('name', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} openDatePicker={onOpenDatePicker} customStyle={styles.modalInput} placeholder='Date Of Birth' keyboardType='number-pad' isDate={true} value={dateString} onChangeText={(text) => handleInputChange('dateOfBirth', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Phone Number' onChangeText={(text) => handleInputChange('phoneNumber', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Username' onChangeText={(text) => handleInputChange('username', text)}/>
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Password' isPassword={true} onChangeText={(text) => handleInputChange('password', text)}/>
-                        
+                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Name' onChangeText={(text) => handleInputChange('name', text)} />
+                        <CustomEditText textColor={styles.modalInputText} openDatePicker={onOpenDatePicker} customStyle={styles.modalInput} placeholder='Date Of Birth' keyboardType='number-pad' isDate={true} value={dateString} onChangeText={(text) => handleInputChange('dateOfBirth', text)} />
+                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Phone Number' onChangeText={(text) => handleInputChange('phoneNumber', text)} />
+                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Username' onChangeText={(text) => handleInputChange('username', text)} />
+                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Password' isPassword={true} onChangeText={(text) => handleInputChange('password', text)} />
+
                         <Picker
                             selectedValue={formData.role}
                             onValueChange={(value) => handleInputChange('role', value)}>
@@ -129,10 +173,10 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
                 <View style={styles.modalContent}>
 
                     {renderFields()}
-                    <LoginButton title='Submit' bgColor={{ backgroundColor: '#D17842', borderRadius: 10 }} textColor={{ color: COLORS.textColor }} customStyle={styles.button} onPress={handleSubmit}/>
+                    <LoginButton title='Submit' bgColor={{ backgroundColor: '#D17842', borderRadius: 10 }} textColor={{ color: COLORS.textColor }} customStyle={styles.button} onPress={handleSubmit} />
                 </View>
 
-                
+
             </View>
         </Modal>
     );

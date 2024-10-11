@@ -5,6 +5,7 @@ import { FONTS, COLORS } from '../styles/constants';
 
 const CustomEditText = ({ value, placeholder, onChangeText, openDatePicker, isPassword = false, isDate = false, isSearch = false, keyboardType = 'default', customStyle, textColor }) => {
     const [showPassword, setShowPassword] = useState(false);
+    const [valueString, setValueString] = useState(value);
 
     let eyeIcon;
     if (isPassword) {
@@ -33,6 +34,11 @@ const CustomEditText = ({ value, placeholder, onChangeText, openDatePicker, isPa
         );
     }
 
+    const onChangeTextInput = (text) => {
+        setValueString(text);
+        onChangeText(text);
+    }
+
     return (
         <View style={[styles.container, customStyle]} onTouchEnd={openDatePicker}>
             {searchIcon}
@@ -40,8 +46,8 @@ const CustomEditText = ({ value, placeholder, onChangeText, openDatePicker, isPa
                 style={[styles.input, textColor]}
                 placeholder={placeholder}
                 placeholderTextColor={COLORS.secondTextColor}
-                value={value}
-                onChangeText={onChangeText}
+                value={valueString}
+                onChangeText={onChangeTextInput}
                 editable={!isDate}
                 secureTextEntry={isPassword && !showPassword}
                 keyboardType={keyboardType}

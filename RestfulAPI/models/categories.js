@@ -6,7 +6,6 @@ const categorySchema = new Schema({
     books: [
         {
             book: { type: Schema.Types.ObjectId, ref: 'Book', required: true },
-            quantity: { type: Number, required: true }
         }
     ]
 }, { timestamps: true });

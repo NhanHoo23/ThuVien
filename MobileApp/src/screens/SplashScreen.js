@@ -36,8 +36,8 @@ const SplashScreen = ({ navigation }) => {
                 DataManager.shared.setUsers(users);
 
                 const books = await fetchBooks();
-                DataManager.shared.setBooks(books);     
-
+                DataManager.shared.setBooks(books);   
+                
                 const categories = await fetchCategories();
                 DataManager.shared.setCategories(categories);
 
