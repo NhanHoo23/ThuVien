@@ -41,7 +41,7 @@ router.post('/add-loan', async (req, res) => {
 
 //Put
 router.put('/update-loan/:id', async (req, res) => {
-    const { status } = req.body;
+    const { name, date, idBook, price, status } = req.body;
     const id = req.params.id;
 
     try {
@@ -50,6 +50,10 @@ router.put('/update-loan/:id', async (req, res) => {
             return res.status(404).json({ message: 'Loan not found' });
         }
 
+        loan.name = name;
+        loan.date = date;
+        loan.idBook = idBook;
+        loan.price = price;
         loan.status = status;
 
         const loadData = await loan.save();

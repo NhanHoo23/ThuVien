@@ -1,4 +1,4 @@
-import { Button, Pressable, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
+import { Button, Image, Pressable, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { COLORS } from '../../styles/constants'
 
@@ -6,26 +6,32 @@ const BookItem = ({ book, onEdit, onDelete }) => {
 
     return (
         <View style={styles.item}>
-            <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.text, { fontWeight: 'bold' }]}>Tên sách: </Text>
-                <Text style={styles.text}>{book.bookName}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.text, { fontWeight: 'bold' }]}>Tác giả: </Text>
-                <Text style={styles.text}>{book.author}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.text, { fontWeight: 'bold' }]}>Giá: </Text>
-                <Text style={styles.text}>{book.price}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.text, { fontWeight: 'bold' }]}>Số lượng: </Text>
-                <Text style={styles.text}>{book.quantity}</Text>
-            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={{ uri: book.image }} style={{ width: 100, height: 100 }} resizeMode='center' />
 
-            <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.text, { fontWeight: 'bold' }]}>Thể loại: </Text>
-                <Text style={styles.text}>{book.idCategory.name}</Text>
+                <View style={{ marginLeft: 5 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.text, { fontWeight: 'bold' }]}>Tên sách: </Text>
+                        <Text style={styles.text}>{book.bookName}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.text, { fontWeight: 'bold' }]}>Tác giả: </Text>
+                        <Text style={styles.text}>{book.author}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.text, { fontWeight: 'bold' }]}>Giá: </Text>
+                        <Text style={styles.text}>{book.price}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.text, { fontWeight: 'bold' }]}>Số lượng: </Text>
+                        <Text style={styles.text}>{book.quantity}</Text>
+                    </View>
+
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.text, { fontWeight: 'bold' }]}>Thể loại: </Text>
+                        <Text style={styles.text}>{book.idCategory.name}</Text>
+                    </View>
+                </View>
             </View>
 
             <View style={styles.buttonContainer}>

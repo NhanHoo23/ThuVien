@@ -19,14 +19,15 @@ router.get('/get-books', (req, res) => {
 
 //POST
 router.post('/add-book', (req, res) => {
-    const { bookName, author, price, idCategory, quantity } = req.body;
+    const { bookName, author, price, idCategory, quantity, image } = req.body;
 
     const newBook = new Book({
         bookName,
         author,
         price,
         quantity,
-        idCategory
+        idCategory,
+        image
     });
 
     Category.findById(idCategory)
@@ -87,7 +88,7 @@ router.post('/add-book', (req, res) => {
 
 //PUT
 router.put('/update-book/:id', (req, res) => {
-    const { bookName, author, price, idCategory, quantity } = req.body;
+    const { bookName, author, price, idCategory, quantity, image } = req.body;
     const bookId = req.params.id;
 
     Book.findById(bookId)
@@ -101,6 +102,7 @@ router.put('/update-book/:id', (req, res) => {
             book.author = author || book.author;
             book.price = price || book.price;
             book.quantity = quantity || book.quantity; 
+            book.image = image || book.image;
 
             if (idCategory && idCategory !== book.idCategory.toString()) {
                 // Tìm danh mục mới
@@ -159,6 +161,7 @@ router.put('/update-book/:id', (req, res) => {
                             bookInCategory.author = author;
                             bookInCategory.price = price;
                             bookInCategory.quantity = quantity;
+                            bookInCategory.image = image;
                         }
 
                         return category.save();

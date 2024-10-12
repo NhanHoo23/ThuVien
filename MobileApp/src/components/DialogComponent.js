@@ -5,8 +5,6 @@ import CustomEditText from './CustomEditText';
 import LoginButton from './LoginButton';
 import { COLORS } from '../styles/constants';
 import { validateBook, validateCategory, validateEmployee } from '../utils/validation';
-import DataManager from '../utils/DataManager';
-import { set } from 'mongoose';
 
 export const ScreenType = {
     Home: 'Home',
@@ -153,6 +151,7 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
 
                         <CustomEditText value={book ? book.bookName : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Book Name' onChangeText={(text) => handleInputChange('bookName', text)} />
                         <CustomEditText value={book ? book.author : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Author' onChangeText={(text) => handleInputChange('author', text)} />
+                        <CustomEditText value={book ? book.image : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Image' onChangeText={(text) => handleInputChange('image', text)} />
                         <CustomEditText value={book ? String(book.price) : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Price' keyboardType='number-pad' onChangeText={(text) => handleInputChange('price', Number(text))} />
                         <CustomEditText
                             value={book ? String(book.quantity) : ""}
