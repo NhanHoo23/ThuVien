@@ -32,8 +32,16 @@ export const validateCategory = ({ name }) => {
     return null;
 };
 
-export const validateUser = ({ name, dateOfBirth, phoneNumber, username, password }) => {
+export const validateEmployee = ({ name, dateOfBirth, phoneNumber, username, password }) => {
     if (!name || !dateOfBirth || !username || !password || !phoneNumber) {
+        return 'All fields are required';
+    }
+
+    return null;
+};
+
+export const validateMember = ({ name, dateOfBirth, phoneNumber}) => {
+    if (!name || !dateOfBirth || !phoneNumber) {
         return 'All fields are required';
     }
 

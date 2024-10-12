@@ -1,21 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { COLORS } from '../../styles/constants'
 
-const LoanItem = (item) => {
-    const convertDate = new Date(item.loan.date)
+const LoanItem = ({ loan, onEdit, onDelete }) => {
+    const convertDate = new Date(loan.date)
     const convertDateToString = convertDate.toLocaleDateString()
-    let totalPrice
 
     return (
         <View style={styles.item}>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={[styles.text, { fontWeight: 'bold' }]}>Mã phiếu mượn: </Text>
-                <Text style={styles.text}>{item.loan._id}</Text>
+                <Text style={styles.text}>{loan._id}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={[styles.text, { fontWeight: 'bold' }]}>Họ và tên: </Text>
-                <Text style={styles.text}>{item.loan.idUser.name}</Text>
+                <Text style={styles.text}>{loan.name}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={[styles.text, { fontWeight: 'bold' }]}>Ngày mượn: </Text>
@@ -23,31 +22,36 @@ const LoanItem = (item) => {
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <Text style={[styles.text, { fontWeight: 'bold' }]}>Sách mượn: </Text>
-                <View>
-                    {item.loan.idBooks.map((book) => (
-                        <Text style={styles.text}>{book.bookName}</Text>
-                    ))}
-                </View>
+                <Text style={styles.text}>{loan.idBook.bookName}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 9, flexDirection: 'row' }}>
                     <Text style={[styles.text, { fontWeight: 'bold' }]}>Giá mượn: </Text>
 
-                    {(() => {
-                        let totalPrice = 0;
-                        item.loan.idBooks.forEach((book) => {
-                            totalPrice += book.price;
-                        });
-
-                        return <Text style={styles.text}>{totalPrice} VND</Text>;
-                    })()}
+                    <Text style={styles.text}>{loan.price}</Text>
                 </View>
 
                 <View>
-                    <Text style={[styles.text, { fontWeight: 'bold', color: item.loan.status === 0 ? '#E34040' : 'blue' }]}>
-                        {item.loan.status === 0 ? 'Chưa trả' : 'Đã trả'}
+                    <Text style={[styles.text, { fontWeight: 'bold', color: loan.status === 1 ? '#E34040' : 'blue' }]}>
+                        {loan.status === 1 ? 'Chưa trả' : 'Đã trả'}
                     </Text>
                 </View>
+            </View>
+
+            <View style={styles.buttonContainer}>
+
+                <TouchableOpacity style={{ flex: 1 }} onPress={() => onEdit(loan)}>
+                    <View style={{ backgroundColor: 'white', marginRight: 5, padding: 10, borderRadius: 5, alignItems: 'center' }}>
+                        <Text style={{ color: 'black' }}>Sửa</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{ flex: 1 }} onPress={() => onDelete(loan)}>
+                    <View style={{ backgroundColor: '#F65757', marginLeft: 5, padding: 10, borderRadius: 5, alignItems: 'center' }}>
+                        <Text style={{ color: 'white' }}>Xóa</Text>
+                    </View>
+                </TouchableOpacity>
+
             </View>
         </View>
     )
@@ -65,5 +69,10 @@ const styles = StyleSheet.create({
     text: {
         color: COLORS.textColor,
         fontSize: 16
-    }
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+    },
 })

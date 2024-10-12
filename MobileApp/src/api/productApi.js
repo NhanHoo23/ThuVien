@@ -78,6 +78,8 @@ export const deleteBook = async (bookId) => {
     }
 }
 
+
+/*------------------LOAN API-------------------*/
 export const fetchLoans = async () => {
     try {
         const response = await axios.get(`${API_URL}/get-loans`);
@@ -86,3 +88,30 @@ export const fetchLoans = async () => {
         throw error;
     }
 };
+
+export const addLoan = async (loanData) => {
+    try {
+        const response = await axios.post(`${API_URL}/add-loan`, loanData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateLoan = async (loanId, loanData) => {
+    try {
+        const response = await axios.put(`${API_URL}/update-loan/${loanId}`, loanData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteLoan = async (loanId) => {
+    try {
+        const response = await axios.delete(`${API_URL}/delete-loan/${loanId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

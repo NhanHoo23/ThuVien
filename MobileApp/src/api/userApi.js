@@ -11,6 +11,24 @@ export const register = async (userData) => {
     }
 };
 
+export const registerMember = async (userData) => {
+    try {
+        const response = await axios.post(`${API_URL}/register-member`, userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const updateMember = async (userId, userData) => {
+    try {
+        const response = await axios.put(`${API_URL}/update-member/${userId}`, userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 export const login = async (userData) => {
     try {
@@ -29,3 +47,21 @@ export const fetchUsers = async () => {
         throw error;
     }
 };
+
+export const updateUser = async (userId, userData) => {
+    try {
+        const response = await axios.put(`${API_URL}/update-user/${userId}`, userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}   
+
+export const deleteUser = async (userId) => {
+    try {
+        const response = await axios.delete(`${API_URL}/delete-user/${userId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

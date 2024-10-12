@@ -6,7 +6,6 @@ import HomeScreen from './HomeScreen';
 import CategoriesScreen from './CategoriesScreen';
 import LoansScreen from './LoansScreen';
 import UsersScreen from './UsersScreen';
-import ChangePasswordScreen from './ChangePasswordScreen';
 import { useNavigation } from '@react-navigation/native';
 import AppManager from '../utils/AppManager';
 
@@ -42,17 +41,14 @@ const MainContainer = () => {
                     drawerInactiveTintColor: '#aaa'
                 }}
                 drawerContent={(props) => <CustomDrawerContent {...props} />}>
-                <Drawer.Screen name="Home" component={HomeScreen} />
-
-
+                <Drawer.Screen name="Home" component={HomeScreen} options={{ title: "Quản lý sách" }} />
+                <Drawer.Screen name="Categories" component={CategoriesScreen} options={{ title: "Quản lý loại sách" }} />
+                <Drawer.Screen name="Loans" component={LoansScreen} options={{ title: "Quản lý phiếu mượn" }} />
                 {AppManager.shared.isAdmin() && (
                     <>
-                        <Drawer.Screen name="Categories" component={CategoriesScreen} />
-                        <Drawer.Screen name="Users" component={UsersScreen} />
+                        <Drawer.Screen name="Users" component={UsersScreen} options={{ title: "Quản lý nhân viên" }} />
                     </>
                 )}
-                <Drawer.Screen name="Loans" component={LoansScreen} />
-                <Drawer.Screen name="ChangePassword" component={ChangePasswordScreen} />
             </Drawer.Navigator>
         </SafeAreaView>
     )

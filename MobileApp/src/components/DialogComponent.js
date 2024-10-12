@@ -4,12 +4,15 @@ import { Picker } from '@react-native-picker/picker';
 import CustomEditText from './CustomEditText';
 import LoginButton from './LoginButton';
 import { COLORS } from '../styles/constants';
-import { validateBook, validateCategory, validateUser } from '../utils/validation';
+import { validateBook, validateCategory, validateEmployee } from '../utils/validation';
+import DataManager from '../utils/DataManager';
+import { set } from 'mongoose';
 
 export const ScreenType = {
     Home: 'Home',
     Categotry: 'Category',
-    User: 'User',
+    Employee: 'Employee',
+    Loan: 'Loan',
 };
 
 export const DialogType = {
@@ -17,45 +20,79 @@ export const DialogType = {
     Edit: 'Edit',
 };
 
-const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenType, categories, roles, dateString, dateOutput, book, category, user }) => {
+const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenType, categories, books, dateString, dateOutput, book, category, user, loan }) => {
     const [formData, setFormData] = useState({});
     const [titleString, setTitleString] = useState('Add');
     const [type, setType] = useState(DialogType.Add);
 
+    const states = [1,2];
+
     useEffect(() => {
-        if (book || category || user) {
+        if (book || category || user || loan) {
             console.log('Edit');
-            
+
             setTitleString('Edit')
             setType(DialogType.Edit);
 
-            if (book) {                
+            if (book) {
                 setFormData({
                     bookName: book.bookName || '',
                     author: book.author || '',
                     price: book.price || '',
                     idCategory: book.idCategory || '',
                     quantity: book.quantity || '',
-                });                                
-            } 
+                });
+            }
             if (category) {
                 setFormData({
                     name: category.name || '',
                 });
+            }
+            if (user) {
+                setFormData({
+                    name: user.name || '',
+                    dateOfBirth: user.dateOfBirth || '',
+                    phoneNumber: user.phoneNumber || '',
+                    username: user.username || '',
+                    password: user.password || '',
+                    role: user.role || '',
+                });
+            }
+            if (loan) {
+                setFormData({
+                    date: loan.date || '',
+                    status: loan.status || '',
+                    price: loan.price || '',
+                    name: loan.name || '',
+                    idBook: loan.idBook._id || '',
+                });
+                
             }
         } else {
             console.log('Add');
             setTitleString('Add')
             setType(DialogType.Add);
 
-            if (screenType === ScreenType.Home && categories.length > 0) {            
+            if (screenType === ScreenType.Home && categories.length > 0) {
                 handleInputChange('idCategory', categories[0]._id);
+            }
+
+            if (screenType === ScreenType.Employee) {
+                handleInputChange('role', 1);
+                console.log('role', formData.role);
+            }
+
+            if (screenType === ScreenType.Loan) {                
+                setFormData({ idBook: books[0]._id, status: 1 });
+
+                console.log('formData', formData);
+                
             }
         }
     }, [visible]);
 
     const handleInputChange = (field, value) => {
-        setFormData({ ...formData, [field]: value });        
+        setFormData({ ...formData, [field]: value });
     }
 
     const dismiss = () => {
@@ -66,19 +103,20 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
     const handleSubmit = () => {
         var err = "";
         switch (screenType) {
-            case ScreenType.Home:                
+            case ScreenType.Home:
                 err = validateBook(formData);
                 break;
             case ScreenType.Categotry:
                 err = validateCategory(formData);
                 break;
-            case ScreenType.User:
-                const userData = {
+            case ScreenType.Employee:
+                const employeeData = {
                     ...formData,
                     dateOfBirth: dateOutput,
                 };
-                err = validateUser(userData);
+                err = validateEmployee(employeeData);
                 break;
+
             default:
                 break;
         }
@@ -92,12 +130,18 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
             onSubmit(formData, type, book);
         } else if (screenType === ScreenType.Categotry) {
             onSubmit(formData, type, category);
-        } else if (screenType === ScreenType.User) {
+        } else if (screenType === ScreenType.Employee) {
             formData.dateOfBirth = dateOutput;
+            onSubmit(formData, type, user);
+        } else if (screenType === ScreenType.Loan) {
+            formData.date = dateOutput;
+            formData.price = books.find(b => b._id === formData.idBook).price
 
-            //onSubmit(formData, type, user);
+            console.log('formData', formData);
+            
+            onSubmit(formData, type, loan);
         }
-        
+
     };
 
     const renderFields = () => {
@@ -120,9 +164,7 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
 
                         <Picker
                             selectedValue={formData.idCategory}
-                            onValueChange={(value) => {handleInputChange('idCategory', value)
-                                console.log(formData.idCategory);
-                            }}>
+                            onValueChange={(value) => handleInputChange('idCategory', value)}>
                             {categories.map((category) => (
                                 <Picker.Item label={category.name} value={category._id} key={category._id} />
                             ))}
@@ -135,26 +177,49 @@ const DialogComponent = ({ visible, onSubmit, onClose, onOpenDatePicker, screenT
                         <Text style={styles.modalTitle}>{titleString} Categotry</Text>
                         <CustomEditText value={category ? category.name : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Category Name' onChangeText={(text) => handleInputChange('name', text)} />
                     </>)
-            case ScreenType.User:
+            case ScreenType.Employee:
                 return (
                     <>
                         <Text style={styles.modalTitle}>{titleString} User</Text>
 
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Name' onChangeText={(text) => handleInputChange('name', text)} />
-                        <CustomEditText textColor={styles.modalInputText} openDatePicker={onOpenDatePicker} customStyle={styles.modalInput} placeholder='Date Of Birth' keyboardType='number-pad' isDate={true} value={dateString} onChangeText={(text) => handleInputChange('dateOfBirth', text)} />
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Phone Number' onChangeText={(text) => handleInputChange('phoneNumber', text)} />
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Username' onChangeText={(text) => handleInputChange('username', text)} />
-                        <CustomEditText textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Password' isPassword={true} onChangeText={(text) => handleInputChange('password', text)} />
+                        <CustomEditText value={user ? user.name : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Name' onChangeText={(text) => handleInputChange('name', text)} />
 
-                        <Picker
-                            selectedValue={formData.role}
-                            onValueChange={(value) => handleInputChange('role', value)}>
-                            {roles.map((role) => (
-                                <Picker.Item label={role === 0 ? 'Admin' : 'User'} value={role} key={role} />
-                            ))}
-                        </Picker>
+                        <CustomEditText value={user ? (new Date(user.dateOfBirth)).toLocaleDateString() : dateString} textColor={styles.modalInputText} openDatePicker={onOpenDatePicker} customStyle={styles.modalInput} placeholder='Date Of Birth' keyboardType='number-pad' isDate={true} />
+
+                        <CustomEditText value={user ? user.phoneNumber : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Phone Number' onChangeText={(text) => handleInputChange('phoneNumber', text)} />
+                        <CustomEditText value={user ? user.username : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Username' onChangeText={(text) => handleInputChange('username', text)} />
+                        <CustomEditText value={user ? user.password : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Password' isPassword={true} onChangeText={(text) => handleInputChange('password', text)} />
                     </>
                 );
+
+            case ScreenType.Loan:
+                return (
+                    <>
+                        <Text style={styles.modalTitle}>{titleString} Loan</Text>
+
+                        <CustomEditText value={loan ? loan.name : ""} textColor={styles.modalInputText} customStyle={styles.modalInput} placeholder='Name' onChangeText={(text) => handleInputChange('name', text)} />
+
+                        <CustomEditText value={loan ? (new Date(loan.date)).toLocaleDateString() : dateString} textColor={styles.modalInputText} openDatePicker={onOpenDatePicker} customStyle={styles.modalInput} placeholder='Date' keyboardType='number-pad' isDate={true} />
+
+                        <Picker
+                            selectedValue={formData.idBook}
+                            onValueChange={(value) => handleInputChange('idBook', value)}>
+                            {books.map((book) => (
+                                <Picker.Item label={book.bookName} value={book._id} key={book._id} />
+                            ))}
+                        </Picker>
+
+                        <Picker
+                            selectedValue={formData.status}
+                            onValueChange={(value) => handleInputChange('status', value)}>
+                            {states.map((state) => (
+                                <Picker.Item label={state === 1 ? "Chưa trả": "Đã trả"} value={state} key={state} />
+                            ))}
+                        </Picker>
+                        
+                    </>
+                );
+
             default:
                 return null;
         }

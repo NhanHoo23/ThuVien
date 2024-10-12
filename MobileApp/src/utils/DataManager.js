@@ -40,7 +40,7 @@ class DataManager {
   }
 
 
-  
+  // Getters and Setters User
   setUsers(users) {
     this.users = users;
   }
@@ -48,6 +48,31 @@ class DataManager {
   getUsers() {
     return this.users;
   }
+
+  getEmplyees() {
+    return this.users.filter(user => user.role === 1);
+  }
+
+  getMembers() {
+    return this.users.filter(user => user.role === 2);
+  }
+
+  pushUser(user) {
+    this.users.push(user);
+  }
+
+  updateUser(user) {
+    const index = this.users.findIndex(u => u._id === user._id);
+    if (index !== -1) {
+      this.users[index] = user;
+    }
+  }
+
+  deleteUser(user) {  
+    this.users = this.users.filter(u => u._id !== user._id);
+  }
+
+  
 
 
   // Getters and Setters Category
@@ -92,12 +117,29 @@ class DataManager {
     this.books = this.books.filter(b => b.idCategory._id !== category._id);
   }
 
+
+  // Getters and Setters Loans
   setLoans(loans) {
     this.loans = loans;
   }
 
   getLoans() {
     return this.loans;
+  }
+
+  pushLoan(loan) {
+    this.loans.push(loan);
+  }
+
+  updateLoan(loan) {
+    const index = this.loans.findIndex(l => l._id === loan._id);
+    if (index !== -1) {
+      this.loans[index] = loan;
+    }
+  }
+
+  deleteLoan(loan) {
+    this.loans = this.loans.filter(l => l._id !== loan._id);
   }
 
 }

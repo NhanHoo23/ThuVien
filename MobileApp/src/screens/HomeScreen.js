@@ -89,10 +89,7 @@ const HomeScreen = () => {
         useCallback(() => {
             setBooks(DataManager.shared.getBooks());
             setCategories(DataManager.shared.getCategories());
-            console.log('HomeScreen focused');
-            console.log('books', DataManager.shared.getBooks());
-            
-
+        
             return () => {
                 // Hàm cleanup (nếu cần)
             };
