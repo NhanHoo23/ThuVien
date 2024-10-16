@@ -53,10 +53,6 @@ class DataManager {
     return this.users.filter(user => user.role === 1);
   }
 
-  getMembers() {
-    return this.users.filter(user => user.role === 2);
-  }
-
   pushUser(user) {
     this.users.push(user);
   }
@@ -73,8 +69,6 @@ class DataManager {
   }
 
   
-
-
   // Getters and Setters Category
   setCategories(categories) {
     this.categories = categories;

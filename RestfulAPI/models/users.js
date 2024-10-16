@@ -7,7 +7,7 @@ const userSchema = new Schema({
     password: {type: String},
     dateOfBirth: {type: Date, required: true},
     phoneNumber: {type: String, required: true},
-    role: {type: Number, required: true}, // 1: Thủ Thư, 2: Thành viên
+    role: {type: Number, default: 1}, // 1: Thủ Thư, 0: Admin
 });
 
 module.exports = mongoose.model('User', userSchema);

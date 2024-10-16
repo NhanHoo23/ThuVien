@@ -53,7 +53,8 @@ const RegisterScreen = ({ navigation }) => {
                 dateOfBirth: convertDate,
                 phoneNumber,
                 username,
-                password
+                password,
+                role: 1
             })
 
             setLoading(false)
@@ -72,8 +73,8 @@ const RegisterScreen = ({ navigation }) => {
             );
         } catch (error) {
             setLoading(false)
-            console.log("Error: " + error);
-            Alert.alert('Error', 'Something went wrong');
+            console.log("Error: ", error.response ? error.response.data : error.message);
+            Alert.alert('Error', error.message);
         }
     };
 
